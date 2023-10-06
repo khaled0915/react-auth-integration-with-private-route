@@ -1,6 +1,14 @@
+import { useContext } from "react";
 import { Link } from "react-router-dom";
+import { AuthContext } from "../contextProvider/AuthProvider";
 
 const Register = () => {
+
+    // access createUser
+
+    const {createUser} = useContext(AuthContext)
+
+    
 
     const handleRegister = e =>{
         e.preventDefault();
@@ -9,6 +17,17 @@ const Register = () => {
         const name = e.target.name.value;
 
         console.log(email , name, password)
+
+
+        // create user in firebase
+
+        createUser(email , password)
+        .then(result =>{
+            console.log(result.user)
+        })
+        .catch(error =>{
+            console.error(error)
+        })
     }
     return (
         <div className="hero min-h-screen bg-base-200">
