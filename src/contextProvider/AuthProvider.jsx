@@ -1,33 +1,48 @@
 import { createContext, useEffect, useState } from "react";
 
-import {  createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "firebase/auth";
+import {  GoogleAuthProvider, createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, signInWithPopup, signOut } from "firebase/auth";
 
 import PropTypes from 'prop-types';
 import auth from "../Firebase/firebase.config";
 
  export const AuthContext = createContext(null);
 
+ const googleProvider = new GoogleAuthProvider();
+
 const AuthProvider = ({children}) => {
 
     const [user , setUser] = useState(null);
 
+    const [loading , setLoading] = useState(true)
+
 
     // for registration
     const createUser = (email , password) => {
+        // setLoading(true)
         return createUserWithEmailAndPassword (auth , email , password);
     }
 
     // for login 
+    // setLoading(true)
 
     const signInUser = (email , password)=>{
         return signInWithEmailAndPassword(auth , email , password);
     }
 
     // for signOut 
+    // setLoading(true)
 
     const logOut = () =>{
        return signOut(auth);
     }
+
+    // for google sign in 
+
+    const signInWithGoogle = () =>{
+        return signInWithPopup(auth , googleProvider);
+    }
+
+
 
 
     // observe auth state change 
@@ -36,6 +51,8 @@ const AuthProvider = ({children}) => {
 
      const unSubscribe =    onAuthStateChanged(auth , currentUSer =>{
             setUser(currentUSer);
+
+            setLoading(false)
 
             console.log('current value of the current user ' , currentUSer)
         });
@@ -51,7 +68,12 @@ const AuthProvider = ({children}) => {
 
 
  //  pass the func and state in  the context
-    const authInfo = { user , createUser, signInUser , logOut}
+    const authInfo = { user ,
+         createUser,
+          signInUser , 
+          loading,
+          logOut ,
+           signInWithGoogle}
     return (
         <AuthContext.Provider value ={authInfo}>
             {children}

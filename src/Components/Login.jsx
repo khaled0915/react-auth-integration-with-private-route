@@ -1,11 +1,20 @@
 import { useContext } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../contextProvider/AuthProvider";
 
 
 const Login = () => {
 
-    const {signInUser} = useContext(AuthContext);
+    const {signInUser , signInWithGoogle} = useContext(AuthContext);
+
+    const navigate = useNavigate();
+
+
+    const handleGoogleSignIn = () =>{
+        signInWithGoogle()
+        .then(result => console.log(result.user))
+        .catch(error => console.error(error))
+    }
 
 
     const handleLogin = e =>{
@@ -18,6 +27,15 @@ const Login = () => {
         signInUser(email , password)
         .then(result =>{
             console.log(result.user)
+
+            // to clean or reset 
+
+            e.target.reset();
+
+            // after reset navigate
+            navigate('/');
+
+
         })
         .catch(error =>{
             console.error(error)
@@ -60,6 +78,11 @@ const Login = () => {
 
       <button className="btn btn-link">Register</button>
       </Link> </p>
+
+
+      <p>
+      <button onClick={handleGoogleSignIn} className="btn btn-ghost">Google</button>
+      </p>
 
 
 
